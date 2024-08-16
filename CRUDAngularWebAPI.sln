@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRUDAngularWebAPI.Server", "CRUDAngularWebAPI.Server\CRUDAngularWebAPI.Server.csproj", "{F52B1B6E-ADDD-4DFC-8E60-E602A8836127}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "crudangularwebapi.client", "crudangularwebapi.client\crudangularwebapi.client.esproj", "{E8083103-52E4-4919-9BCE-0B530413C7B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F52B1B6E-ADDD-4DFC-8E60-E602A8836127}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F52B1B6E-ADDD-4DFC-8E60-E602A8836127}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F52B1B6E-ADDD-4DFC-8E60-E602A8836127}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F52B1B6E-ADDD-4DFC-8E60-E602A8836127}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8083103-52E4-4919-9BCE-0B530413C7B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8083103-52E4-4919-9BCE-0B530413C7B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8083103-52E4-4919-9BCE-0B530413C7B0}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E8083103-52E4-4919-9BCE-0B530413C7B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8083103-52E4-4919-9BCE-0B530413C7B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8083103-52E4-4919-9BCE-0B530413C7B0}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {12C1680B-5F0C-491B-8739-AB5CB274DC22}
+	EndGlobalSection
+EndGlobal

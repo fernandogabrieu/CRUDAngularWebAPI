@@ -1,0 +1,6 @@
+@CRUDAngularWebAPI.Server_HostAddress = http://localhost:5210
+
+GET {{CRUDAngularWebAPI.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
