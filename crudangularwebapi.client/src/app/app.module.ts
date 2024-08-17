@@ -9,11 +9,14 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from "ngx-bootstrap/modal";
 import { CustomersComponent } from './components/customers/customers.component';
+import { LoansService } from './loans.service';
+import { LoansComponent } from './components/loans/loans.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CustomersComponent
+    CustomersComponent,
+    LoansComponent
   ],
   imports: [
     BrowserModule,
@@ -23,7 +26,7 @@ import { CustomersComponent } from './components/customers/customers.component';
     ReactiveFormsModule,
     ModalModule.forRoot()
   ],
-  providers: [HttpClientModule, CustomersService],
+  providers: [HttpClientModule, CustomersService, LoansService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

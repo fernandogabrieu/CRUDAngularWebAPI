@@ -28,8 +28,8 @@ export class CustomersComponent implements OnInit{
   //inicialização dos componentes
   ngOnInit(): void {
 
-    this.customersService.GetCustomers().subscribe(resultado => {
-      this.customers = resultado;
+    this.customersService.GetCustomers().subscribe(result => {
+      this.customers = result;
     });  //obtendo todos os customers e salvando eles em customers do tipo Customer[] (definida ali em cima)
   }
 
