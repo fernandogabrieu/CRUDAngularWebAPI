@@ -17,13 +17,19 @@ namespace CRUDAngularWebAPI.Server.Controllers
         private readonly ApplicationDbContext _applicationDbContext;
 
         //serviço de cálculo do valor a ser pago do empréstimo
-        private readonly LoanCalculationService _loanCalculationService; 
+        private readonly LoanCalculationService _loanCalculationService;
+
+        //serviço para obter lista de moedas
+        private readonly CoinListService _coinListService;
 
         //construtor do controller
-        public LoansController(ApplicationDbContext applicationDbContext, LoanCalculationService loanCalculationService)
+        public LoansController(ApplicationDbContext applicationDbContext,
+                               LoanCalculationService loanCalculationService,
+                               CoinListService coinListService)
         {
             _applicationDbContext = applicationDbContext;
             _loanCalculationService = loanCalculationService;
+            _coinListService = coinListService;
         }
 
         //método Get All Loans
@@ -111,6 +117,19 @@ namespace CRUDAngularWebAPI.Server.Controllers
             var valueToBePaid = _loanCalculationService.CalculateValueToBePaid(loan);
 
             return Ok(valueToBePaid);
+        }
+
+        [HttpGet("coins")]
+        public async Task<IActionResult> GetCoinList()
+        {
+            var coins = await _coinListService.GetCoinListAsync();
+            
+            if (coins == null || !coins.Any())
+            {
+                return NotFound("No currencies found");
+            }
+
+            return Ok(coins);
         }
     }
 }

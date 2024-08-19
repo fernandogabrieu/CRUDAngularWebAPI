@@ -26,6 +26,10 @@ builder.Services.AddCors();
 
 builder.Services.AddSingleton<LoanCalculationService>();
 
+builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<CoinListService>();
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
