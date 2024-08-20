@@ -69,7 +69,7 @@
         <div class="form-group">
           <label><!--Customer Id-->Cliente Id</label>
           <input type="number" class="form-control form-control-sm" formControlName="customerId" />
-          <div *ngIf="form.get('customerId').invalid && simulateClicked" class="text-danger">
+          <div *ngIf="form.get('customerId').invalid && simulateOrSaveClicked" class="text-danger">
             Customer Id is required.
           </div>
         </div>
@@ -77,7 +77,7 @@
         <div class="form-group">
           <label><!--Value Obtained-->Valor Obtido</label>
           <input type="number" class="form-control form-control-sm" formControlName="valueObtained" />
-          <div *ngIf="form.get('valueObtained').invalid && simulateClicked" class="text-danger">
+          <div *ngIf="form.get('valueObtained').invalid && simulateOrSaveClicked" class="text-danger">
             Value Obtained is required.
           </div>
         </div>
@@ -89,22 +89,22 @@
               {{ coin.symbol }}
             </option>
           </select>
-          <div *ngIf="form.get('coin').invalid && simulateClicked" class="text-danger">
+          <div *ngIf="form.get('coin').invalid && simulateOrSaveClicked" class="text-danger">
             Coin is required.
           </div>
         </div>
 
         <div class="form-group">
           <label><!--Conversion Rate To Real-->Taxa de Conversão para Reais</label>
-          <input type="number" class="form-control form-control-sm" formControlName="conversionRateToReal" readonly />
-          <div *ngIf="form.get('conversionRateToReal').invalid && simulateClicked" class="text-danger">
+          <input type="number" class="form-control form-control-sm disabled-appearance" formControlName="conversionRateToReal" readonly />
+          <!--<div *ngIf="form.get('conversionRateToReal').invalid && simulateOrSaveClicked" class="text-danger">
             Conversion Rate To Real is required.
-          </div>
+          </div>-->
         </div>
         <div class="form-group">
           <label><!--Loan Date-->Data do Empréstimo</label>
           <input type="date" class="form-control form-control-sm" formControlName="dateOfLoan" [min]="today" (change)="updateExpirationDate()"/>
-          <div *ngIf="form.get('dateOfLoan').invalid && simulateClicked" class="text-danger">
+          <div *ngIf="form.get('dateOfLoan').invalid && simulateOrSaveClicked" class="text-danger">
             Date of Loan is required.
           </div>
         </div>
@@ -113,22 +113,22 @@
         <div class="form-group">
           <label><!--Number Of Installments-->Número de Parcelas</label>
           <input type="number" class="form-control form-control-sm" formControlName="installments" (change)="updateInstallments()" />
-          <div *ngIf="form.get('installments').invalid && simulateClicked" class="text-danger">
+          <div *ngIf="form.get('installments').invalid && simulateOrSaveClicked" class="text-danger">
             Number of installments are required.
           </div>
         </div>
 
         <div class="form-group">
           <label><!--Due Date-->Data de Vencimento</label>
-          <input type="date" class="form-control form-control-sm" formControlName="dateOfExpiration" readonly  />
-          <div *ngIf="form.get('dateOfExpiration').invalid && simulateClicked" class="text-danger">
+          <input type="date" class="form-control form-control-sm disabled-appearance" formControlName="dateOfExpiration" readonly  />
+          <div *ngIf="form.get('dateOfExpiration').invalid && simulateOrSaveClicked" class="text-danger">
             Date of expiration is required.
           </div>
         </div>
 
         <div class="form-group">
           <label><!--Value To Be Paid-->Valor a Pagar</label>
-          <input type="number" class="form-control form-control-sm" formControlName="valueToBePaid" [value]="valueToBePaid" readonly />
+          <input type="number" class="form-control form-control-sm disabled-appearance" formControlName="valueToBePaid" [value]="valueToBePaid" readonly />
         </div>
 
         <div class="container">

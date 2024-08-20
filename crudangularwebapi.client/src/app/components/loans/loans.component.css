@@ -1,0 +1,5 @@
+.disabled-appearance {
+  background-color: #f0f0f0; /* Cor de fundo cinza */
+  color: #6c757d; /* Cor do texto cinza */
+  pointer-events: none; /* Evita que o usuário clique ou altere o valor */
+}

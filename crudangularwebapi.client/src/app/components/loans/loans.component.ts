@@ -24,7 +24,7 @@ export class LoansComponent implements OnInit{
   visibilityTable: boolean = true;
   visibilityForm: boolean = false;
 
-  simulateClicked = false;
+  simulateOrSaveClicked = false;
 
   modalRef: BsModalRef;
   loanId: number;
@@ -72,26 +72,22 @@ export class LoansComponent implements OnInit{
       installments: new FormControl(null, Validators.required)
     });
 
-    // Adiciona o listener para o campo 'coin'
+    // Listener para o campo 'coin'
     this.form.get('coin').valueChanges.subscribe(selectedCoin => {
       if (selectedCoin) {
         this.updateConversionRate(selectedCoin);
       }
     });
-
-
     // Listener para atualizar a data de vencimento automaticamente
     this.form.get('installments').valueChanges.subscribe(installments => {
       if (installments) {
         this.updateInstallments();
       }
     });
-
-    // Adiciona o listener para o campo 'dateOfLoan'
+    // Listener para o campo 'dateOfLoan'
     this.form.get('dateOfLoan').valueChanges.subscribe(() => {
       this.updateExpirationDate();
     });
-
   }
 
   ShowUpdateForm(id): void {
@@ -143,15 +139,15 @@ export class LoansComponent implements OnInit{
   SendForm(): void {
     const loan: Loan = this.form.value;
 
-    this.simulateClicked = true; // Marca que o botão foi clicado
+    this.simulateOrSaveClicked = true; // Marca que o botão foi clicado
 
     //Verifico se o usuário já existe, se sim, é Update. Se não, é Create
     if (loan.id > 0) {
       this.loansService.PutLoan(loan).subscribe(result => {
         this.visibilityForm = false;
         this.visibilityTable = true;
+        this.simulateOrSaveClicked = false;
         alert('Loan successfully updated!')
-
         this.loansService.GetLoans().subscribe(registers => {
           this.loans = registers;
         });
@@ -160,6 +156,7 @@ export class LoansComponent implements OnInit{
       this.loansService.PostLoan(loan).subscribe(result => {  //aqui posso criar um atributo caso eu receba algo do nosso servidor
         this.visibilityForm = false;
         this.visibilityTable = true;
+        this.simulateOrSaveClicked = false;
         alert('Loan successfully registered!')
 
         this.loansService.GetLoans().subscribe(registers => {
@@ -172,14 +169,14 @@ export class LoansComponent implements OnInit{
   //Função da ação ao clicar em Simulate (chama requisição de simulação e trás valor como retorno)
   SimulateLoan(): void {
 
-    this.simulateClicked = true; // Marca que o botão foi clicado
+    this.simulateOrSaveClicked = true; // Marca que o botão foi clicado
 
     if (this.form.valid) {
       this.loansService.SimulateLoan(this.form.value).subscribe((result : number)=> {
         this.valueToBePaid = parseFloat(result.toFixed(2));//result;
         this.form.patchValue({ valueToBePaid: this.valueToBePaid });
 
-        this.simulateClicked = false; // Reinicia o estado após a simulação bem sucedida
+        this.simulateOrSaveClicked = false; // Reinicia o estado após a simulação bem sucedida
       },
         error => {
           console.error('Error simulating loan', error);
@@ -191,7 +188,7 @@ export class LoansComponent implements OnInit{
   }
 
   Back(): void {
-    this.simulateClicked = false;
+    this.simulateOrSaveClicked = false;
 
     this.visibilityTable = true;
     this.visibilityForm = false;
@@ -267,6 +264,9 @@ export class LoansComponent implements OnInit{
 
       // Adiciona o número de parcelas (em meses) à data do empréstimo
       minExpirationDate.setMonth(minExpirationDate.getMonth() + installments);
+
+      // Adiciona 1 dia à data calculada para compensar o ajuste de dias
+      minExpirationDate.setDate(minExpirationDate.getDate() + 1);
 
       // Atualiza o campo de data de expiração com a nova data calculada
       this.form.patchValue({ dateOfExpiration: formatDate(minExpirationDate, 'yyyy-MM-dd', 'en-US') });
