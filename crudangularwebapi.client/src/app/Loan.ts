@@ -7,4 +7,5 @@ export class Loan {
   dateOfExpiration: Date;
   valueToBePaid: number;
   customerId: number;
+  installments: number;
 }

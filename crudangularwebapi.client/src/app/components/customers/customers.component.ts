@@ -37,7 +37,7 @@ export class CustomersComponent implements OnInit{
     this.visibilityTable = false;
     this.visibilityForm = true;
 
-    this.tittleForm = 'New Customer';
+    this.tittleForm = 'Novo Cliente';/*'New Customer';*/
 
     this.form = new FormGroup({
       name: new FormControl(null),
@@ -53,7 +53,7 @@ export class CustomersComponent implements OnInit{
     this.visibilityForm = true;
 
     this.customersService.GetCustomer(id).subscribe(result => {
-      this.tittleForm = `Update ${result.name} ${result.lastname}`;
+      this.tittleForm = /*`Update*/ `Alterando cadastro de ${result.name} ${result.lastname}`;
 
       this.form = new FormGroup({
         id: new FormControl(result.id),

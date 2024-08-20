@@ -60,17 +60,7 @@ namespace CRUDAngularWebAPI.Server.Controllers
             //loan.DateOfExpiration = loan.DateOfExpiration.Date;
             loan.DateOfLoan = DateTime.SpecifyKind(loan.DateOfLoan.Date.AddDays(1), DateTimeKind.Utc);
             loan.DateOfExpiration = DateTime.SpecifyKind(loan.DateOfExpiration.Date.AddDays(1), DateTimeKind.Utc);
-            /*
-            //Cálculo do número de meses entre a data de empréstimo e vencimento
-            int numberOfMonths = ((loan.DateOfExpiration.Year - loan.DateOfLoan.Year) * 12) + loan.DateOfExpiration.Month - loan.DateOfLoan.Month;
-
-            //Definição da taxa de juros
-            decimal interestRate = 0.02m;
-
-            //Cálculo do valor final usando juros compostos
-            loan.ValueToBePaid = loan.ValueObtained * (decimal)Math.Pow((double)(1 + interestRate), numberOfMonths);
-            */
-
+            
             loan.ValueToBePaid = _loanCalculationService.CalculateValueToBePaid(loan);
 
             await _applicationDbContext.Loans.AddAsync(loan);

@@ -13,6 +13,7 @@ namespace CRUDAngularWebAPI.Server.Models
         public DateTime DateOfExpiration { get; set; }
         public decimal? ValueToBePaid { get; set; }
         public int CustomerId { get; set; } //um empréstimo (Loan) deve ter um cliente (Customer)
+        public int Installments { get; set; }
 
     }
 }

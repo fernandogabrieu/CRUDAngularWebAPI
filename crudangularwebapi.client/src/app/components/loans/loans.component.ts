@@ -37,12 +37,8 @@ export class LoansComponent implements OnInit{
 
   today: string;
 
-  minExpirationDate: string | null = null;
-  dateError: string | null = null;
+  installments: number;
 
-  //possívelmente terá mais coisas aqui baseado no que está em customers.component.ts
-
-  //constructor(private loansService: LoansService, private fb: FormBuilder) { }
   constructor(private loansService: LoansService, private modalService: BsModalService) { }
 
   ngOnInit(): void {
@@ -63,16 +59,17 @@ export class LoansComponent implements OnInit{
     this.visibilityTable = false;
     this.visibilityForm = true;
 
-    this.tittleForm = 'New Loan';
+    this.tittleForm = 'Novo Empréstimo';/*'New Loan';*/
 
     this.form = new FormGroup({
       valueObtained: new FormControl(null, Validators.required),
       coin: new FormControl(null, Validators.required),
       conversionRateToReal: new FormControl(null, Validators.required),
-      dateOfLoan: new FormControl(null, Validators.required),
-      dateOfExpiration: new FormControl(null, Validators.required),
+      dateOfLoan: new FormControl(this.today, Validators.required),
+      dateOfExpiration: new FormControl(null),
       customerId: new FormControl(null, Validators.required),
-      valueToBePaid: new FormControl(null)
+      valueToBePaid: new FormControl(null),
+      installments: new FormControl(null, Validators.required)
     });
 
     // Adiciona o listener para o campo 'coin'
@@ -81,6 +78,20 @@ export class LoansComponent implements OnInit{
         this.updateConversionRate(selectedCoin);
       }
     });
+
+
+    // Listener para atualizar a data de vencimento automaticamente
+    this.form.get('installments').valueChanges.subscribe(installments => {
+      if (installments) {
+        this.updateInstallments();
+      }
+    });
+
+    // Adiciona o listener para o campo 'dateOfLoan'
+    this.form.get('dateOfLoan').valueChanges.subscribe(() => {
+      this.updateExpirationDate();
+    });
+
   }
 
   ShowUpdateForm(id): void {
@@ -88,47 +99,51 @@ export class LoansComponent implements OnInit{
     this.visibilityForm = true;
 
     this.loansService.GetLoan(id).subscribe(result => {
-      this.tittleForm = `Update ${result.id} ${result.valueToBePaid}`;
+      this.tittleForm = `Alterando Empréstimo de Id ${result.id}`;
 
       // Formatando as datas para o formato esperado
       const formattedDateOfLoan = formatDate(result.dateOfLoan, 'yyyy-MM-dd', 'en-US');
       const formattedDateOfExpiration = formatDate(result.dateOfExpiration, 'yyyy-MM-dd', 'en-US');
 
-
       this.form = new FormGroup({
         id: new FormControl(result.id),
-        valueObtained: new FormControl(result.valueObtained),
-        coin: new FormControl(result.coin),
-        conversionRateToReal: new FormControl(result.conversionRateToReal),
-        dateOfLoan: new FormControl(formattedDateOfLoan),
+        valueObtained: new FormControl(result.valueObtained, Validators.required),
+        coin: new FormControl(result.coin, Validators.required),
+        conversionRateToReal: new FormControl(result.conversionRateToReal, Validators.required),
+        dateOfLoan: new FormControl(formattedDateOfLoan, Validators.required),
+        installments: new FormControl(result.installments, Validators.required),
         dateOfExpiration: new FormControl(formattedDateOfExpiration),
-        customerId: new FormControl(result.customerId),
+        customerId: new FormControl(result.customerId, Validators.required),
         valueToBePaid: new FormControl(result.valueToBePaid)
-       });
+      });
+
+
+
+      // Listener para o campo 'coin'
+      this.form.get('coin').valueChanges.subscribe(selectedCoin => {
+        if (selectedCoin) {
+          this.updateConversionRate(selectedCoin);
+        }
+      });
+
+      // Listener para atualizar a data de vencimento automaticamente
+      this.form.get('installments').valueChanges.subscribe(installments => {
+        if (installments) {
+          this.updateInstallments();
+        }
+      });
+
+      // Adiciona o listener para o campo 'dateOfLoan'
+      this.form.get('dateOfLoan').valueChanges.subscribe(() => {
+        this.updateExpirationDate();
+      });
     });
   }
 
   SendForm(): void {
     const loan: Loan = this.form.value;
 
-    const dateOfLoan = new Date(loan.dateOfLoan);
-    const dateOfExpiration = new Date(loan.dateOfExpiration);
-
-    // Validar as datas
-    if (dateOfLoan < new Date(this.today)) {
-      this.dateError = 'Loan date must be equal to or greater than the current date.';
-      return;
-    }
-    if (dateOfExpiration <= dateOfLoan) {
-      this.dateError = 'The due date must be greater than the loan date.';
-      return;
-    }
-    if (dateOfExpiration < new Date(dateOfLoan.setMonth(dateOfLoan.getMonth() + 1))) {
-      this.dateError = 'The due date must be at least 1 month after the loan date.';
-      return;
-    }
-
-    this.dateError = null;
+    this.simulateClicked = true; // Marca que o botão foi clicado
 
     //Verifico se o usuário já existe, se sim, é Update. Se não, é Create
     if (loan.id > 0) {
@@ -161,8 +176,10 @@ export class LoansComponent implements OnInit{
 
     if (this.form.valid) {
       this.loansService.SimulateLoan(this.form.value).subscribe((result : number)=> {
-        this.valueToBePaid = result;
-        this.form.patchValue({ valueToBePaid: this.valueToBePaid })
+        this.valueToBePaid = parseFloat(result.toFixed(2));//result;
+        this.form.patchValue({ valueToBePaid: this.valueToBePaid });
+
+        this.simulateClicked = false; // Reinicia o estado após a simulação bem sucedida
       },
         error => {
           console.error('Error simulating loan', error);
@@ -174,6 +191,8 @@ export class LoansComponent implements OnInit{
   }
 
   Back(): void {
+    this.simulateClicked = false;
+
     this.visibilityTable = true;
     this.visibilityForm = false;
   }
@@ -195,21 +214,6 @@ export class LoansComponent implements OnInit{
 
   // Método para chamar a API e buscar o valor da moeda
   updateConversionRate(selectedCoin: string) {
-  /*
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() - 2);
-    const formattedDate = formatDate(currentDate, 'MM-dd-yyyy', 'en-US');
-    
-
-    this.loansService.GetConversionRate(selectedCoin, formattedDate).subscribe(response => {
-      if (response && response.value && response.value.length > 0) {
-        const rate = response.value[0].cotacaoCompra;
-        this.form.patchValue({ conversionRateToReal: rate });
-      } else {
-        alert('Conversion rate not found for the selected coin.');
-      }
-    });
-  */
     const maxAttempts = 10;  // Máximo de tentativas para buscar a cotação
     let currentDate = new Date();
 
@@ -242,15 +246,38 @@ export class LoansComponent implements OnInit{
     fetchConversionRate(1);
   }
 
-  // Método para atualizar a data mínima de vencimento de acordo com a data de empréstimo
-  updateExpirationMinDate() {
+  /*updateExpirationDate(installments: number): void {
     const dateOfLoan = this.form.get('dateOfLoan')?.value;
+
+    if (dateOfLoan && installments > 0) {
+      const loanDate = new Date(dateOfLoan);
+      loanDate.setMonth(loanDate.getMonth() + installments);
+      this.form.patchValue({ dateOfExpiration: formatDate(loanDate, 'yyyy-MM-dd', 'en-US') });
+    }
+  }*/
+
+  // Atualiza a data mínima de vencimento com base na data do empréstimo e parcelas
+  updateExpirationDate() {
+    const dateOfLoan = this.form.get('dateOfLoan')?.value;
+    const installments = this.form.get('installments')?.value; // Número de parcelas
+
     if (dateOfLoan) {
       const loanDate = new Date(dateOfLoan);
       const minExpirationDate = new Date(loanDate);
-      minExpirationDate.setMonth(minExpirationDate.getMonth() + 1);
 
-      this.minExpirationDate = formatDate(minExpirationDate, 'yyyy-MM-dd', 'en-US');
+      // Adiciona o número de parcelas (em meses) à data do empréstimo
+      minExpirationDate.setMonth(minExpirationDate.getMonth() + installments);
+
+      // Atualiza o campo de data de expiração com a nova data calculada
+      this.form.patchValue({ dateOfExpiration: formatDate(minExpirationDate, 'yyyy-MM-dd', 'en-US') });
+    }
+  }
+
+  // Atualiza a data de expiração sempre que o número de parcelas muda
+  updateInstallments() {
+    const installments = this.form.get('installments')?.value;
+    if (installments) {
+      this.updateExpirationDate();
     }
   }
 }

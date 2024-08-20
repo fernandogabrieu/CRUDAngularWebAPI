@@ -19,10 +19,10 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.getForecasts();
+    //this.getForecasts();
   }
 
-  getForecasts() {
+  /*getForecasts() {
     this.http.get<WeatherForecast[]>('/weatherforecast').subscribe(
       (result) => {
         this.forecasts = result;
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
         console.error(error);
       }
     );
-  }
+  }*/
 
   title = 'crudangularwebapi.client';
 }
